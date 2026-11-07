@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080d18">
+<title>ATOM AI 2.0</title>
+<style>
+:root{--bg:#080d18;--panel:#101a2b;--panel2:#0c1422;--line:#243650;--cyan:#59d8ef;--blue:#6396ff;--text:#eaf4ff;--muted:#91a5bd;--green:#65e6b1;--red:#ff7777}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#18304d 0%,#080d18 55%);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:#080d18eF;border-bottom:1px solid var(--line);backdrop-filter:blur(12px);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px}.logo{width:38px;height:38px;border:1px solid #3d9db9;border-radius:12px;display:grid;place-items:center;color:var(--cyan);font-weight:900;box-shadow:0 0 20px #39c7e733}.brand strong{letter-spacing:.13em}.sub{font-size:11px;color:var(--muted);letter-spacing:.12em}
+.status{font-size:11px;color:var(--green);border:1px solid #285e54;padding:5px 9px;border-radius:99px}
+main{max-width:1100px;margin:auto;padding:16px;display:grid;gap:14px}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}
+.panel{background:linear-gradient(145deg,#111d30,#0c1422);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:0 12px 36px #0003;min-width:0}
+.panel h2{font-size:14px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 12px;color:#c9e9f5}
+.robot-wrap{height:310px;position:relative;overflow:hidden;border-radius:14px;background:radial-gradient(ellipse at 50% 65%,#173c56 0%,#0a1525 55%,#080e19 100%);border:1px solid #1b3953}
+#robot3d{width:100%;height:100%;display:block}.robot-label{position:absolute;bottom:10px;left:12px;color:#83dff0;font-size:11px;letter-spacing:.14em}
+.metrics{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.metric{background:#0a1422;border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:11px;color:var(--muted)}.metric b{color:var(--text)}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button,.btn{background:#14263a;color:var(--text);border:1px solid #31516e;border-radius:11px;padding:10px 13px;font-weight:650;cursor:pointer}
+button.primary{background:linear-gradient(110deg,#167f9d,#315dc0);border-color:#4dbbd2}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:active{transform:translateY(1px)}
+.small{font-size:12px;color:var(--muted)}
+.chat{display:flex;flex-direction:column;min-height:330px}.messages{flex:1;max-height:290px;overflow:auto;display:flex;flex-direction:column;gap:9px;padding:4px 2px 12px}
+.msg{max-width:92%;padding:10px 12px;border-radius:13px;background:#14243a;border:1px solid #263f5b;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:#123b50;border-color:#236b80}.msg.system{font-size:12px;color:var(--muted);background:#0b1421}
+.chatrow{display:flex;gap:7px;margin-top:8px}.chatrow input,.field input{min-width:0;flex:1;background:#081321;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:12px;font:inherit}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.camera{position:relative;background:#050a12;border:1px solid var(--line);border-radius:13px;overflow:hidden;aspect-ratio:4/3}
+.camera video,.camera canvas{position:absolute;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.camera canvas{pointer-events:none}.cam-placeholder{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--muted);padding:20px}
+.field{display:flex;gap:8px;margin:8px 0}.field label{width:105px;align-self:center;color:var(--muted);font-size:12px}
+textarea{width:100%;min-height:70px;background:#081321;color:var(--text);border:1px solid var(--line);border-radius:11px;padding:10px;font:inherit;resize:vertical}
+.memory-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}.chip{border:1px solid #31506b;background:#0c1b2c;border-radius:99px;padding:5px 9px;color:#b7d9e8;font-size:11px}
+footer{text-align:center;color:#627990;font-size:11px;padding:8px 16px 24px}
+@media(max-width:760px){.hero,.grid2{grid-template-columns:1fr}.robot-wrap{height:280px}main{padding:11px}.panel{padding:12px}.chat{min-height:300px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">A</div><div><strong>ATOM 2.0</strong><div class="sub">PERSONAL ROBOT INTELLIGENCE</div></div></div>
+ <div class="status" id="connectionStatus">● LOCAL DEMO</div>
+</header>
+<main>
+ <section class="hero">
+  <div class="panel">
+   <h2>01 / Digital body</h2>
+   <div class="robot-wrap"><canvas id="robot3d"></canvas><div class="robot-label">ATOM // HUMANOID SIMULATION</div></div>
+   <div class="metrics"><div class="metric">AI <b id="aiMetric">Demo</b></div><div class="metric">Motion <b id="motionMetric">Idle</b></div><div class="metric">Memory <b id="memoryMetric">0 items</b></div></div>
+   <div class="controls"><button id="waveBtn" class="primary">Wave gesture</button><button id="resetPoseBtn">Reset pose</button><button id="speakBtn">Speak status</button></div>
+  </div>
+  <div class="panel chat">
+   <h2>02 / Cloud AI brain</h2>
+   <div class="messages" id="messages"><div class="msg system">ATOM is ready in local demo mode. Add your private backend URL in Settings to enable real cloud AI.</div><div class="msg">Hello. I'm ATOM 2.0. Tell me something about yourself, or teach me a movement using the camera panel.</div></div>
+   <div class="chatrow"><input id="chatInput" placeholder="Talk to ATOM..." autocomplete="off"><button id="sendBtn" class="primary">Send</button></div>
+   <div class="controls"><button id="voiceBtn">🎙 Voice input</button><button id="clearChatBtn">Clear chat</button></div>
+  </div>
+ </section>
+ <section class="grid2">
+  <div class="panel">
+   <h2>03 / Motion learning</h2>
+   <div class="camera"><video id="cameraVideo" playsinline muted></video><canvas id="poseCanvas"></canvas><div class="cam-placeholder" id="cameraPlaceholder">Camera is off.<br>Start camera to let ATOM observe your pose.</div></div>
+   <div class="controls"><button id="cameraBtn" class="primary">Start camera</button><button id="recordPoseBtn" disabled>Save my pose</button><button id="stopCameraBtn" disabled>Stop</button></div>
+   <p class="small" id="motionHint">Camera processing happens in your browser. Pose landmarks are not uploaded to the AI server.</p>
+   <div class="memory-list" id="poseChips"></div>
+  </div>
+  <div class="panel">
+   <h2>04 / Personal memory</h2>
+   <p class="small">Teach ATOM facts about your preferences. These are saved on this device and included as context when cloud AI is connected.</p>
+   <textarea id="memoryInput" placeholder="Example: I prefer short, clear explanations. I like robotics and learning by building."></textarea>
+   <div class="controls"><button id="saveMemoryBtn" class="primary">Teach ATOM</button><button id="clearMemoryBtn">Clear memory</button></div>
+   <div class="memory-list" id="memoryList"></div>
+   <div style="height:12px"></div>
+   <h2>05 / Connection settings</h2>
+   <div class="field"><label>Backend URL</label><input id="backendUrl" placeholder="https://your-atom-api.example.com"></div>
+   <div class="controls"><button id="saveSettingsBtn">Save connection</button><button id="testConnectionBtn">Test AI</button></div>
+   <p class="small">Never put an AI API key in this page. The key belongs only in your backend's private environment variables.</p>
+ </div>
+ </section>
+</main>
+<footer>ATOM AI 2.0 · Experimental digital prototype · Camera and memory controls stay under your control</footer>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+const $=id=>document.getElementById(id);
+const state={backend:localStorage.getItem('atom_backend')||'',memory:JSON.parse(localStorage.getItem('atom_memory')||'[]'),poses:JSON.parse(localStorage.getItem('atom_poses')||'[]'),chat:[],landmarks:null,poseTask:null,cameraStream:null,recording:false,lastPoseAt:0,waving:false};
+$('backendUrl').value=state.backend;
+function status(s){$('connectionStatus').textContent='● '+s}
+function addMsg(text,who='bot'){const d=document.createElement('div');d.className='msg '+(who==='user'?'user':who==='system'?'system':'');d.textContent=text;$('messages').append(d);$('messages').scrollTop=$('messages').scrollHeight;return d}
+function renderMemory(){$('memoryList').innerHTML='';state.memory.forEach((m,i)=>{const e=document.createElement('span');e.className='chip';e.textContent=m.slice(0,70);$('memoryList').append(e)});$('memoryMetric').textContent=state.memory.length+' items'}
+function renderPoses(){$('poseChips').innerHTML='';state.poses.forEach(p=>{const e=document.createElement('span');e.className='chip';e.textContent=p.name+' · '+p.time;$('poseChips').append(e)})}
+renderMemory();renderPoses();
+
+async function sendChat(){
+ const input=$('chatInput'),text=input.value.trim();if(!text)return;input.value='';addMsg(text,'user');
+ const memory=state.memory.join('\n');let reply='';
+ if(state.backend){
+  try{
+   const res=await fetch(state.backend.replace(/\/$/,'')+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,memory,history:state.chat.slice(-8)})});
+   if(!res.ok)throw new Error('Backend returned '+res.status);
+   const data=await res.json();reply=data.reply||'I received that, but the server returned no reply.';state.chat.push({role:'user',content:text},{role:'assistant',content:reply});$('aiMetric').textContent='Cloud';status('CLOUD AI CONNECTED');
+  }catch(e){reply='I could not reach the cloud AI backend. Check the backend URL and server deployment. ('+e.message+')';}
+ }else{
+  reply='I am currently in local demo mode, so I cannot call a real AI model yet. Your message is visible, and your personal memory is saved on this device. Connect the private backend in Settings to activate cloud intelligence.';
+ }
+ addMsg(reply);if('speechSynthesis'in window){/* user controls speech explicitly */}
+}
+$('sendBtn').onclick=sendChat;$('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendChat()});
+$('clearChatBtn').onclick=()=>{$('messages').innerHTML='';state.chat=[];addMsg('Conversation cleared. Personal memory remains saved.','system')};
+$('saveMemoryBtn').onclick=()=>{const v=$('memoryInput').value.trim();if(!v)return;state.memory.push(v);localStorage.setItem('atom_memory',JSON.stringify(state.memory));$('memoryInput').value='';renderMemory();addMsg('I saved that to my personal memory on this device.','bot')};
+$('clearMemoryBtn').onclick=()=>{if(!confirm('Clear all personal memory saved on this device?'))return;state.memory=[];localStorage.removeItem('atom_memory');renderMemory()};
+$('saveSettingsBtn').onclick=()=>{state.backend=$('backendUrl').value.trim().replace(/\/$/,'');localStorage.setItem('atom_backend',state.backend);status(state.backend?'BACKEND URL SAVED':'LOCAL DEMO');addMsg(state.backend?'Backend URL saved. Test the connection next.':'Backend URL cleared. Running in local demo mode.','system')};
+$('testConnectionBtn').onclick=async()=>{if(!state.backend){addMsg('Enter your backend URL first.','system');return}try{const r=await fetch(state.backend+'/health');const d=await r.json();addMsg('Backend reachable: '+(d.status||'OK')+'. Cloud AI key configured: '+(d.aiConfigured?'yes':'no')+'.','system');status('BACKEND REACHABLE')}catch(e){addMsg('Connection test failed: '+e.message,'system')}};
+$('speakBtn').onclick=()=>{const t='ATOM 2.0 is online. '+state.memory.length+' personal memory items saved and '+state.poses.length+' poses learned.';if('speechSynthesis'in window){speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t))}};
+$('voiceBtn').onclick=()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){addMsg('Voice recognition is not supported in this browser. Try Chrome.','system');return}const r=new SR();r.lang='en-IN';r.onresult=e=>{$('chatInput').value=e.results[0][0].transcript;sendChat()};r.onerror=()=>addMsg('Voice input was unavailable.','system');r.start()};
+
+// Lightweight 3D humanoid built from primitives; no high-cost shadows or post-processing.
+const canvas=$('robot3d'),renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(canvas.clientWidth,canvas.clientHeight,false);
+const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(35,canvas.clientWidth/canvas.clientHeight,.1,100);camera.position.set(0,1.35,6.4);
+scene.add(new THREE.HemisphereLight(0x9bdfff,0x101a2d,2));const key=new THREE.DirectionalLight(0x9cecff,2.2);key.position.set(3,5,4);scene.add(key);
+const robot=new THREE.Group();scene.add(robot);
+const metal=new THREE.MeshStandardMaterial({color:0x9eb9c9,metalness:.78,roughness:.28}),dark=new THREE.MeshStandardMaterial({color:0x26394d,metalness:.65,roughness:.35}),glow=new THREE.MeshStandardMaterial({color:0x3cd8f2,emissive:0x087c9c,emissiveIntensity:1.4,metalness:.4,roughness:.25});
+function part(parent,geo,mat,pos){const m=new THREE.Mesh(geo,mat);m.position.set(...pos);parent.add(m);return m}
+const torso=part(robot,new THREE.CapsuleGeometry(.38,.72,4,8),metal,[0,0,0]);part(robot,new THREE.SphereGeometry(.28,12,10),dark,[0,.62,0]);part(robot,new THREE.BoxGeometry(.34,.08,.08),glow,[0,.63,.245]);
+const head=part(robot,new THREE.SphereGeometry(.29,16,12),metal,[0,1.12,0]);part(robot,new THREE.BoxGeometry(.34,.055,.06),glow,[0,1.13,.255]);
+part(robot,new THREE.CylinderGeometry(.16,.2,.22,10),dark,[0,-.53,0]);
+const joints={};function limb(name,a,b,r,mat=metal){const g=new THREE.Group();g.position.set(...a);robot.add(g);const v=new THREE.Vector3(b[0]-a[0],b[1]-a[1],b[2]-a[2]);const mesh=part(g,new THREE.CylinderGeometry(r*.72,r,v.length(),8),mat,[0,-v.length()/2,0]);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,-1,0),v.clone().normalize());part(g,new THREE.SphereGeometry(r*1.15,8,8),dark,[0,0,0]);joints[name]=g;return g}
+limb('leftUpper',[-.42,.48,0],[-.72,-.05,0],.12);limb('rightUpper',[.42,.48,0],[.72,-.05,0],.12);
+limb('leftFore',[-.72,-.05,0],[-.72,-.62,.02],.095);limb('rightFore',[.72,-.05,0],[.72,-.62,.02],.095);
+limb('leftLeg',[-.19,-.62,0],[-.23,-1.38,0],.14);limb('rightLeg',[.19,-.62,0],[.23,-1.38,0],.14);
+part(robot,new THREE.BoxGeometry(.28,.12,.42),dark,[-.23,-1.4,.08]);part(robot,new THREE.BoxGeometry(.28,.12,.42),dark,[.23,-1.4,.08]);
+robot.position.y=-.02;
+function resize(){const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}
+window.addEventListener('resize',resize);let tick=0;
+function animate(){requestAnimationFrame(animate);tick+=.012;if(!state.waving){robot.rotation.y=Math.sin(tick*.35)*.12;head.rotation.y=Math.sin(tick*.6)*.06}else{joints.rightUpper.rotation.z=Math.sin(tick*5)*.8-.7;joints.rightFore.rotation.z=-.35}renderer.render(scene,camera)}animate();
+$('waveBtn').onclick=()=>{state.waving=true;setTimeout(()=>state.waving=false,2600)};
+$('resetPoseBtn').onclick=()=>{state.waving=false;Object.values(joints).forEach(j=>{j.rotation.set(0,0,0)})};
+
+async function startCamera(){
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:360}},audio:false});
+  state.cameraStream=stream;$('cameraVideo').srcObject=stream;await $('cameraVideo').play();$('cameraPlaceholder').style.display='none';$('cameraBtn').disabled=true;$('stopCameraBtn').disabled=false;$('recordPoseBtn').disabled=false;
+  const vision=await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14');
+  const fileset=await vision.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm');
+  state.poseTask=await vision.PoseLandmarker.createFromOptions(fileset,{baseOptions:{modelAssetPath:'https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task',delegate:'CPU'},runningMode:'VIDEO',numPoses:1});
+  status('CAMERA TRACKING');$('motionHint').textContent='Tracking runs locally on your phone. Select “Save my pose” to store a movement sample.';
+  trackLoop();
+ }catch(e){addMsg('Camera or pose model could not start: '+e.message,'system');stopCamera()}
+}
+let trackTimer=0;
+function trackLoop(){if(!state.cameraStream)return;const now=performance.now();if(now-trackTimer>85&&state.poseTask&&$('cameraVideo').readyState>=2){trackTimer=now;const result=state.poseTask.detectForVideo($('cameraVideo'),now);const lm=result.landmarks?.[0];state.landmarks=lm||null;drawPose(lm);if(lm){$('motionMetric').textContent='Tracking';mapPoseToRobot(lm)}}requestAnimationFrame(trackLoop)}
+function drawPose(lm){const c=$('poseCanvas'),v=$('cameraVideo'),ctx=c.getContext('2d');c.width=v.videoWidth||480;c.height=v.videoHeight||360;ctx.clearRect(0,0,c.width,c.height);if(!lm)return;const links=[[11,13],[13,15],[12,14],[14,16],[11,12],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28]];ctx.strokeStyle='#56e2f2';ctx.lineWidth=3;links.forEach(([a,b])=>{if(lm[a]&&lm[b]){ctx.beginPath();ctx.moveTo(lm[a].x*c.width,lm[a].y*c.height);ctx.lineTo(lm[b].x*c.width,lm[b].y*c.height);ctx.stroke()}});ctx.fillStyle='#b7fffb';lm.forEach(p=>{if(p.visibility>.45){ctx.beginPath();ctx.arc(p.x*c.width,p.y*c.height,4,0,Math.PI*2);ctx.fill()}})}
+function mapPoseToRobot(lm){const left=lm[11],right=lm[12],le=lm[13],re=lm[14];if(!left||!right||!le||!re)return;const la=Math.max(-1,Math.min(1,(left.y-le.y)*4));const ra=Math.max(-1,Math.min(1,(right.y-re.y)*4));joints.leftUpper.rotation.z=-la*.75;joints.rightUpper.rotation.z=ra*.75}
+$('cameraBtn').onclick=startCamera;
+function stopCamera(){if(state.cameraStream){state.cameraStream.getTracks().forEach(t=>t.stop());state.cameraStream=null}$('cameraVideo').srcObject=null;$('cameraPlaceholder').style.display='grid';$('cameraBtn').disabled=false;$('stopCameraBtn').disabled=true;$('recordPoseBtn').disabled=true;$('motionMetric').textContent='Idle';if(state.poseTask){state.poseTask.close();state.poseTask=null}const c=$('poseCanvas').getContext('2d');c.clearRect(0,0,$('poseCanvas').width,$('poseCanvas').height);status(state.backend?'BACKEND SAVED':'LOCAL DEMO')}
+$('stopCameraBtn').onclick=stopCamera;
+$('recordPoseBtn').onclick=()=>{if(!state.landmarks){addMsg('No pose detected yet. Stand in view of the camera.','system');return}const keypoints=state.landmarks.map(p=>({x:+p.x.toFixed(3),y:+p.y.toFixed(3),z:+p.z.toFixed(3),v:+(p.visibility||0).toFixed(2)}));const name=prompt('Name this movement (for example: arms raised):','My pose');if(!name)return;state.poses.push({name,time:new Date().toLocaleDateString(),landmarks:keypoints});localStorage.setItem('atom_poses',JSON.stringify(state.poses));renderPoses();addMsg('Saved “'+name+'”. The pose sample is stored on this device.','bot')};
+if(state.backend){status('BACKEND URL SAVED')}
+</script>
+</body>
+</html>
